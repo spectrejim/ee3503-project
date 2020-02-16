@@ -48,7 +48,7 @@ def open_file(file, headers=''):
     return None
 
 
-def ratings(id,rating,user_ratings_total):
+def ratings(id,words,word_ranking_total):
     '''
     `ratings` formats the function parameters in a way where they
     can be stored in CSV or sent to an API.
@@ -61,8 +61,8 @@ def ratings(id,rating,user_ratings_total):
     global USE_CSV
 
     if USE_CSV:
-        file = "ratings.csv"
-        headers = "ID,Rating,Ratings Total\n"
+        file = "rankings.csv"
+        headers = "ID,Ranking,Rankings Total\n"
         f = open_file(file, headers)
         if f == None:
             return
@@ -78,7 +78,7 @@ def ratings(id,rating,user_ratings_total):
         pass
 
 
-def reviews(id,reviews):
+def rankings(id,ranking):
     '''
     `reviews` accepts a dictionary of information and gathers the
     required pieces based on the data model. Data that is not
@@ -95,8 +95,8 @@ def reviews(id,reviews):
         return
 
     if USE_CSV:
-        file = "reviews.csv"
-        headers = "ID,Author,Rating,Text,Time\n"
+        file = "rankings.csv"
+        headers = "ID,Keyword,ranking\n"
         f = open_file(file, headers)
         if f == None:
             return
@@ -110,19 +110,17 @@ def reviews(id,reviews):
 
         Review the `hotels()` function for a better example.
         '''
-        for review in reviews:
+        for ranking in rankings:
             f.write(id) # Start with our ID
-            f.write(","+review['author_name'])
-            f.write(","+str(review['rating']))
-            f.write(","+review['text'][:25])
-            f.write(","+str(review['time']))
+            f.write(","+Keyword['term'])
+            f.write(","+str(words['ranking']))
             f.write("\n") # End with a newline character
     else:
         '''The condition used to send the data to a RESTful API'''
         pass
 
 
-def hotels(id,data):
+def article(id,data):
     '''
     `hotels` accepts a dictionary of information and gathers the
     required pieces based on the data model. Data that is not
@@ -134,20 +132,19 @@ def hotels(id,data):
         data {dictionary} -- Dictionary of data to process
     '''
     global USE_CSV
-    fields = ['name', 'formatted_address', 'formatted_phone_number',
-        'vicinity', 'types', 'place_id', 'geometry']
+    fields = ['name', 'words', 'ranking_words']
 
-    # print(f"DEBUG: hotels()")
+    # print(f"DEBUG: helms()")
     # print(data)
 
     if USE_CSV:
-        file = "hotels.csv"
-        headers = "ID,Name,Address,Phone,Vicinity\n"
+        file = "rankings.csv"
+        headers = "ID,Name,words,ranking_words\n"
         f = open_file(file, headers)
         if f is None:
             return
 
-        f.write(data['place_id'])  # Start with our ID
+        f.write(data['keyword_id'])  # Start with our ID
         for field in fields:  # Write each of the other field
             # print(f"hotels() DEBUG: Processing field {field}")
             d = ''
@@ -155,7 +152,7 @@ def hotels(id,data):
                 d = data[field]
             if field == 'types':
                 d = "|".join(data[field]) # pipe separated list
-            # print(f"hotels() DEBUG: {field} - d={d}")
+            # print(f"helms() DEBUG: {field} - d={d}")
             f.write("," + str(d))
         f.write("\n")  # End with a newline character
     else:
